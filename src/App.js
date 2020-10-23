@@ -5,25 +5,42 @@ import {withStyles} from '@material-ui/core/styles/withStyles';
 import './App.css'
 import { Button, Avatar } from "@material-ui/core";
 import NavBar from "./components/NavBar";
+import SearchBar from './components/SearchBar';
 
-const spotifyApi = new SpotifyWebApi();
+const spotifyWebApi = new SpotifyWebApi();
 class App extends Component {
     constructor() {
         super();
         const params = this.getHashParams();
         const token = params.access_token;
         if (token) {
-        spotifyApi.setAccessToken(token);
+        spotifyWebApi.setAccessToken(token);
         }
         this.state = {
-        loggedIn: token ? true : false,
-        user: {}, 
-        nowPlaying: { name: 'Not Checked', albumArt: '' }
+            loggedIn: token ? true : false,
+            user: {},
+            userImage: '',
+            nowPlaying: { name: 'Not Checked', albumArt: '' },
+            currentSong: {},
+            likedSongs: [],
         }
+        this.updateLikes = this.updateLikes.bind(this);
+        this.updateCurrent = this.updateCurrent.bind(this);
+        this.playSong = this.playSong.bind(this);
     }
 
-    componentWillMount() {
-        this.getMe();
+    componentDidMount() {
+
+        //Get User 
+        spotifyWebApi.getMe()
+        .then((response) => {
+            this.setState({
+            user: response,
+            userImage: response.images[0].url
+            })
+            console.log(response);
+        })
+        // this.getMe();
     }
 
     getHashParams() {
@@ -39,17 +56,18 @@ class App extends Component {
     }
 
     getMe() {
-        spotifyApi.getMe()
+        spotifyWebApi.getMe()
         .then((response) => {
             this.setState({
-            user: response
+            user: response,
+            userImage: response.images[0].url
             })
             console.log(response);
         })
     }
 
     getNowPlaying(){
-        spotifyApi.getMyCurrentPlaybackState()
+        spotifyWebApi.getMyCurrentPlaybackState()
         .then((response) => {
             if (response) {
             this.setState({
@@ -62,21 +80,59 @@ class App extends Component {
         })
     }
 
+    /**
+   * Handles adding selected song to likedSongs
+   * @param {*} likedSong - song to add
+   */
+  updateLikes(likedSong) {
+    let likedSongs = this.state.likedSongs;
+    if (likedSongs.length === 3) {
+      likedSongs.shift();
+      likedSongs.push(likedSong)
+    } else {
+      likedSongs.push(likedSong);
+    }
+    this.setState({
+      likedSongs: [...likedSongs]
+    });
+  }
+
+  /**
+   * Handles playing a selected song. If no song is selected, then Spotify will play the current song in queue
+   * @param {*} song - song to play
+   */
+  playSong(song) {
+    console.log(song || 'Resume');
+    if (!song){
+      spotifyWebApi.play()
+    } else {
+      let songs = {
+        'uris': [`${song.uri}`]
+      };
+      spotifyWebApi.play(songs);
+    }
+  }
+
+  updateCurrent(song) {
+    console.log(song);
+    this.setState({currentSong: song});
+  }
+
 
     render() {
-        const image = this.state.user.images[0].url || '';
-
+        const {userImage} = this.state;
         return (
             <div className="App">
                 <NavBar user={this.state.user}/>
-                <a href='http://localhost:8888'> Login to Spotify </a>
+                <a href='http://localhost:8888/login'>Login to Spotify </a>
                 <div>
                     User: {this.state.user.display_name}
-                    <Avatar src={image}/>
+                    <Avatar src={userImage}/>
                     Now Playing: { this.state.nowPlaying.name }
                 </div>
+                <SearchBar token={spotifyWebApi.getAccessToken()} updateLikes={this.updateLikes}/>
                 <div>
-                    <img src={this.state.nowPlaying.albumArt} style={{ height: 150 }}/>
+                    <img src={this.state.nowPlaying.albumArt} style={{ height: 150 }} alt=''/>
                 </div>
                 {this.state.loggedIn &&
                     <div>
