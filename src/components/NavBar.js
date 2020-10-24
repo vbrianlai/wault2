@@ -7,9 +7,11 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import Avatar from '@material-ui/core/Avatar/Avatar'
+import Avatar from '@material-ui/core/Avatar/Avatar';
+import clsx from 'clsx';
 
-const styles = {
+const drawerWidth = '400px'
+const styles = theme => ({
     navbar: {
         // flexGrow: 1,
         backgroundColor: '#2d3030',
@@ -32,10 +34,37 @@ const styles = {
     },
     rightNav: {
         display: 'flex'
-    }
-}
+    },
+    appBar: {
+        transition: theme.transitions.create(['margin', 'width'], {
+          easing: theme.transitions.easing.sharp,
+          duration: theme.transitions.duration.leavingScreen,
+        }),
+      },
+      appBarShift: {
+        width: `calc(100% - ${drawerWidth})`,
+        transition: theme.transitions.create(['margin', 'width'], {
+          easing: theme.transitions.easing.easeOut,
+          duration: theme.transitions.duration.enteringScreen,
+        }),
+        marginRight: drawerWidth,
+      },
+});
 
 class NavBar extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            open: false
+        }
+    }
+
+    handleDrawerToggle = () => {
+        this.setState({ open: !this.state.open }, () => this.props.openMenu(this.state.open));
+    };
+    
+
+
     render() {
         const {classes, user} = this.props;
         // const MyLink = <Link to="/" {...this.props} />;
@@ -51,20 +80,24 @@ class NavBar extends Component {
         // );
         return (
             <div >
-                <AppBar position="static">
+                <AppBar
+                    position="static"
+                    className={clsx( {
+                        [classes.appBarShift]: this.state.open,
+                    })}
+                >
                     <Toolbar className={classes.navbar}>
-                        {/* <IconButton edge="start" color="inherit" aria-label="menu">
-                        <MenuIcon />
-                        </IconButton> */}
                         <div className={classes.logo}>
                             <Link to='/'>wault</Link>
                         </div>
                         <div className={classes.rightNav}>
-                            {user.display_name ?  
-                                <Avatar src={user.images[0].url}/>
+                            {user.display_name ?
+                                <IconButton onClick={this.handleDrawerToggle}>
+                                    <Avatar src={user.images[0].url} />
+                                </IconButton>
                                 : 
                                 <Button href='http://localhost:8888/login' color="inherit">
-                                    Login
+                                    Login with Spotify
                                 </Button>
                             }
                             
