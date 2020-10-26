@@ -6,66 +6,10 @@ import './App.css'
 import { Button, Avatar, Drawer, Divider } from "@material-ui/core";
 import NavBar from "./components/NavBar";
 import SearchBar from './components/SearchBar';
+import Room from "./components/Room";
 
 const spotifyWebApi = new SpotifyWebApi();
 
-const drawerWidth = '400px'
-const styles = (theme) => ({
-    root: {
-        display: 'flex',
-      },
-      appBar: {
-        transition: theme.transitions.create(['margin', 'width'], {
-          easing: theme.transitions.easing.sharp,
-          duration: theme.transitions.duration.leavingScreen,
-        }),
-      },
-      appBarShift: {
-        width: `calc(100% - ${drawerWidth})`,
-        transition: theme.transitions.create(['margin', 'width'], {
-          easing: theme.transitions.easing.easeOut,
-          duration: theme.transitions.duration.enteringScreen,
-        }),
-        marginRight: drawerWidth,
-      },
-      title: {
-        flexGrow: 1,
-      },
-      hide: {
-        display: 'none',
-      },
-      drawer: {
-        width: drawerWidth,
-        flexShrink: 0,
-      },
-      drawerPaper: {
-        width: drawerWidth,
-      },
-      drawerHeader: {
-        display: 'flex',
-        alignItems: 'center',
-        padding: theme.spacing(0, 1),
-        // necessary for content to be below app bar
-        ...theme.mixins.toolbar,
-        justifyContent: 'flex-start',
-      },
-      content: {
-        flexGrow: 1,
-        padding: theme.spacing(3),
-        transition: theme.transitions.create('margin', {
-          easing: theme.transitions.easing.sharp,
-          duration: theme.transitions.duration.leavingScreen,
-        }),
-        marginRight: -drawerWidth,
-      },
-      contentShift: {
-        transition: theme.transitions.create('margin', {
-          easing: theme.transitions.easing.easeOut,
-          duration: theme.transitions.duration.enteringScreen,
-        }),
-        marginRight: 0,
-      },
-});
 
 
 class App extends Component {
@@ -121,8 +65,8 @@ class App extends Component {
         spotifyWebApi.getMe()
         .then((response) => {
             this.setState({
-            user: response,
-            userImage: response.images[0].url
+                user: response,
+                userImage: response.images[0].url
             })
             console.log(response);
         })
@@ -159,7 +103,7 @@ class App extends Component {
         } else {
             likedSongs.push(likedSong);
         }
-            this.setState({
+        this.setState({
             likedSongs: [...likedSongs]
         });
     }
@@ -188,7 +132,7 @@ class App extends Component {
 
     render() {
         const {userImage} = this.state;
-        const {classes} = this.props;
+        // const {classes} = this.props;
         return (
             <div className="App">
                 <NavBar user={this.state.user} openMenu={this.openMenu}/>
@@ -203,33 +147,10 @@ class App extends Component {
                     <img src={this.state.nowPlaying.albumArt} style={{ height: 150 }} alt=''/>
                 </div>
                 {this.state.loggedIn &&
-                    
-                    <div>
-                        <div className={classes.drawerHeader}/>
-                        <main>
-                            <button onClick={() => this.getNowPlaying()}>
-                                Check Now Playing
-                            </button>
-                            <Button variant='contained' color='primary' onClick={() => this.getMe()}>Get me</Button>
-
-                        </main>
-                        <Drawer
-                            className={classes.drawer}
-                            variant="persistent"
-                            anchor="right"
-                            open={this.state.open}
-                            classes={{
-                                paper: classes.drawerPaper,
-                            }}
-                        >
-                            <Divider />
-                            
-                        </Drawer>
-                        
-                    </div>
+                    <Room open={this.state.open}/>
                 }
             </div>
         );
     }
 }
-export default withStyles(styles)(App);
+export default App;
