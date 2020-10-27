@@ -7,6 +7,7 @@ import { Button, Avatar, Drawer, Divider } from "@material-ui/core";
 import NavBar from "./components/NavBar";
 import SearchBar from './components/SearchBar';
 import Room from "./components/Room";
+import Home from "./Home";
 
 const spotifyWebApi = new SpotifyWebApi();
 
@@ -141,6 +142,7 @@ class App extends Component {
                 <div>
                     <img src={this.state.nowPlaying.albumArt} style={{ height: 150 }} alt=''/>
                 </div>
+                <Home/>
                 {this.state.loggedIn &&
                     <Room open={this.state.open} user={this.state.user}/>
                 }
