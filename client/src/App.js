@@ -142,7 +142,7 @@ class App extends Component {
                 <div>
                     <img src={this.state.nowPlaying.albumArt} style={{ height: 150 }} alt=''/>
                 </div>
-                <Home/>
+                <Home user={this.state.user}/>
                 {this.state.loggedIn &&
                     <Room open={this.state.open} user={this.state.user}/>
                 }
