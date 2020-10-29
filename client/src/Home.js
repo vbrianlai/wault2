@@ -13,12 +13,8 @@ export default class Home extends Component {
 
     async componentWillReceiveProps(nextProps) {
         if (this.props.user !== nextProps.user) {
-            console.log(this.props.user)
-            console.log(nextProps.user)
+
             const data = {
-                // uid: parseInt(this.props.user.id),
-                // display_name: this.props.user.display_name,
-                // email: this.props.user.email,
                 uid: parseInt(nextProps.user.id),
                 display_name: nextProps.user.display_name,
                 email: nextProps.user.email,
@@ -31,7 +27,6 @@ export default class Home extends Component {
                 .catch(err => console.log(err))
 
         }
-        
     }
 
     getUser() {

@@ -6,7 +6,7 @@ import './App.css'
 import { Button, Avatar, Drawer, Divider } from "@material-ui/core";
 import NavBar from "./components/NavBar";
 import SearchBar from './components/SearchBar';
-import Room from "./components/Room";
+import Dashboard from "./components/Dashboard";
 import Home from "./Home";
 
 const spotifyWebApi = new SpotifyWebApi();
@@ -147,7 +147,7 @@ class App extends Component {
                 {this.state.loggedIn &&
                 <div>
                     <Home loggedIn={this.state.loggedIn} user={this.state.user}/>
-                    <Room open={this.state.open} user={this.state.user}/>
+                    <Dashboard open={this.state.open} user={this.state.user}/>
                 </div>
                     
                 }

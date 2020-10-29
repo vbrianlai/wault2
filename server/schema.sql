@@ -1,16 +1,12 @@
 CREATE TABLE users (
   uid INT PRIMARY KEY,
-  display_name VARCHAR(255) UNIQUE,
-  email VARCHAR(255),
-  email_verified BOOLEAN,
-  date_created DATE,
-  last_login DATE,
-  friends INT[],
-  likedSongsByRoom json[]
+  display_name VARCHAR(255),
+  email VARCHAR(255) UNIQUE
 );
 
 CREATE TABLE rooms (
-    rid INT PRIMARY KEY,
-    users INT[],
+    rid uuid PRIMARY KEY,
+    rname VARCHAR(255),
+    rownerId INT,
     usersLikedSongs json[]
 );
