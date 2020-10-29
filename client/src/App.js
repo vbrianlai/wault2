@@ -36,17 +36,18 @@ class App extends Component {
         this.openMenu = this.openMenu.bind(this);
     }
 
-    componentDidMount() {
+    async componentWillMount() {
 
         //Get User 
-        spotifyWebApi.getMe()
-        .then((response) => {
-            this.setState({
-            user: response,
-            userImage: response.images[0].url
-            })
-            console.log(response);
-        })
+        // spotifyWebApi.getMe()
+        // .then((response) => {
+        //     this.setState({
+        //     user: response,
+        //     userImage: response.images[0].url
+        //     })
+        //     console.log(response);
+        // })
+        this.getMe()
         // this.getMe();
     }
 
@@ -69,7 +70,7 @@ class App extends Component {
                 user: response,
                 userImage: response.images[0].url
             })
-            console.log(response);
+            console.log(this.state.user);
         })
     }
 
@@ -142,9 +143,13 @@ class App extends Component {
                 <div>
                     <img src={this.state.nowPlaying.albumArt} style={{ height: 150 }} alt=''/>
                 </div>
-                <Home user={this.state.user}/>
+                
                 {this.state.loggedIn &&
+                <div>
+                    <Home loggedIn={this.state.loggedIn} user={this.state.user}/>
                     <Room open={this.state.open} user={this.state.user}/>
+                </div>
+                    
                 }
             </div>
         );

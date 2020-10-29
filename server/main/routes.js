@@ -9,8 +9,7 @@ router.get('/api/hello', (req, res) => {
 
 // get users
 router.get('/api/get/allUsers', (req, res, next) => {
-    pool.query(`SELECT * FROM users
-                ORDER BY date_created DESC`,
+    pool.query(`SELECT * FROM users`,
                 (q_err, q_res) => {
                     res.json(q_res.rows)
     })
