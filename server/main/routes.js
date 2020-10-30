@@ -16,9 +16,21 @@ router.get('/api/get/allUsers', (req, res, next) => {
 });
 
 
+//get rooms of user
+router.get('/api/get/myRooms', (req, res, next) => {
+    // console.log('hi')
+    console.log(req.query.rownerid)
+    const rownerid = req.query.rownerid;
+    pool.query(`SELECT * from rooms
+                WHERE rownerid = $1`, [rownerid],
+                (q_err, q_res) => {
+                    res.json(q_res.rows)
+                });
+});
+
+
 //create user 
 router.post('/api/post/newUser', (req, res, next) => {
-    // console.log(res);
     const values = [
         req.body.uid,
         req.body.display_name,
@@ -44,7 +56,8 @@ router.post('/api/post/newRoom', (req, res, next) => {
     ]
 
     pool.query(`INSERT INTO rooms(rid, rname, rownerid)
-                VALUES(uuid_generate_v4(), $1, $2)`, values,
+                VALUES(uuid_generate_v4(), $1, $2)
+                ON CONFLICT DO NOTHING`, values,
                 (q_err, q_res) => {
                     if(q_err) return next(q_err);
                     res.json(q_res.rows)

@@ -59,22 +59,53 @@ class Dashboard extends Component {
 			roomNameInput: ''
 		}
 		this.createRoom = this.createRoom.bind(this);
+		this.getRooms = this.getRooms.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 	}
 
+	componentWillReceiveProps(nextProps) {
+        if (this.props.rooms !== nextProps.rooms) {
+			this.setState({rooms: nextProps.rooms})
+        }
+    }
+
 	componentDidMount() {
+		// ValidatorForm.addValidationRule('isRoomUnique', (value) => 
+        //     //for every color saved, check if its name is equal to the text value
+        //     this.props.colors.every(
+        //         ({name}) => name.toLowerCase() !== value.toLowerCase()
+        //     )
+        // );
+        // ValidatorForm.addValidationRule('isColorUnique', () => 
+        //     //for every color saved, check if its color is equal to the color we're trying to add
+        //     this.props.colors.every(
+        //         ({color}) => color !== this.state.currColor
+        //     )
+        // );
 	}
 
 	createRoom() {
-
 		const data = {
 			rname: this.state.roomNameInput,
 			rownerid: parseInt(this.props.user.id)
 		}
 		console.log(data)
 		axios.post('/api/post/newRoom', data)
-			.then(response => console.log(response))
+			.then(res => console.log(res))
             .catch(err => console.log(err))
+	}
+
+	getRooms() {
+		
+		const data = {
+			rownerid: parseInt(this.props.user.id)
+		}
+		console.log(data)
+		axios.get('/api/get/myRooms', {params: {rownerid: parseInt(this.props.user.id)}})
+			.then(res => {
+				console.log(res)
+			})
+			.catch(err => console.log(err))
 	}
 
 	handleChange(e) {
@@ -119,7 +150,7 @@ class Dashboard extends Component {
 					</ValidatorForm>
 
                     <div>
-
+						<Button variant='contained' color='secondary' onClick={this.getRooms}>get my rooms</Button>
                     </div>
                 </Drawer>
                 <main className={clsx(classes.content, {
