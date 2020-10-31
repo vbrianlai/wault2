@@ -7,7 +7,7 @@ import { Button, Avatar, Drawer, Divider } from "@material-ui/core";
 import NavBar from "./components/NavBar";
 import SearchBar from './components/SearchBar';
 import Dashboard from "./components/Dashboard";
-import Home from "./Home";
+import Home from "./components/Home";
 
 const spotifyWebApi = new SpotifyWebApi();
 
@@ -26,7 +26,7 @@ class App extends Component {
             user: {},
             userImage: '',
             nowPlaying: { name: 'Not Checked', albumArt: '' },
-            currentSong: {},
+            playbackState: {},
             likedSongs: [],
             open: false
         }
@@ -34,21 +34,12 @@ class App extends Component {
         this.updateCurrent = this.updateCurrent.bind(this);
         this.playSong = this.playSong.bind(this);
         this.openMenu = this.openMenu.bind(this);
+        this.getMyCurrentPlaybackState = this.getMyCurrentPlaybackState.bind(this)
     }
 
-    async componentWillMount() {
-
-        //Get User 
-        // spotifyWebApi.getMe()
-        // .then((response) => {
-        //     this.setState({
-        //     user: response,
-        //     userImage: response.images[0].url
-        //     })
-        //     console.log(response);
-        // })
-        this.getMe()
-        // this.getMe();
+    componentDidMount() {
+        this.getMe();
+        this.getMyCurrentPlaybackState();
     }
 
     getHashParams() {
@@ -86,6 +77,15 @@ class App extends Component {
             });
             }
         })
+    }
+
+    getMyCurrentPlaybackState() {
+        console.log('hi')
+        spotifyWebApi.getMyCurrentPlaybackState()
+            .then(response => {
+                console.log(response);
+                this.setState({playbackState: response})
+            })
     }
 
     openMenu(drawerStatus) {
@@ -146,8 +146,8 @@ class App extends Component {
                 
                 {this.state.loggedIn &&
                 <div>
-                    <Home loggedIn={this.state.loggedIn} user={this.state.user}/>
-                    <Dashboard open={this.state.open} user={this.state.user}/>
+                    {/* <Home loggedIn={this.state.loggedIn} user={this.state.user} getMyCurrentPlaybackState={this.getMyCurrentPlaybackState}/> */}
+                    <Dashboard open={this.state.open} user={this.state.user} playbackState={this.state.playbackState}/>
                 </div>
                     
                 }

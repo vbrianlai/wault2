@@ -4,12 +4,17 @@ import {ValidatorForm, TextValidator} from 'react-material-ui-form-validator';
 import {withStyles, ThemeProvider, createMuiTheme} from '@material-ui/core/styles';
 import { green, purple, blue } from '@material-ui/core/colors';
 import clsx from 'clsx';
-// import './App.css'
 import { Button, Avatar, Drawer, Divider } from "@material-ui/core";
 import axios from "axios";
+import Home from './Home'
+import background from '../media/Endless-Constellation.svg';
 
 const drawerWidth = '400px'
 const styles = (theme) => ({
+	root: {
+		backgroundImage: `url(${background})`,
+		height: '100vh'
+	},
       title: {
         flexGrow: 1,
       },
@@ -22,7 +27,7 @@ const styles = (theme) => ({
       },
       drawerPaper: {
         width: drawerWidth,
-        backgroundColor: 'gray'
+        backgroundColor: 'white'
       },
       drawerHeader: {
         display: 'flex',
@@ -41,7 +46,7 @@ const styles = (theme) => ({
         }),
         marginRight: -drawerWidth,
         display: 'flex',
-        justifyContent: 'flex-end'
+        justifyContent: 'flex-start'
       },
       contentShift: {
         transition: theme.transitions.create('margin', {
@@ -56,32 +61,33 @@ class Dashboard extends Component {
 	constructor(props) {
 		super(props);
 		this.state={
-			roomNameInput: ''
+			roomNameInput: '',
+			rooms: []
 		}
 		this.createRoom = this.createRoom.bind(this);
 		this.getRooms = this.getRooms.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 	}
 
-	componentWillReceiveProps(nextProps) {
-        if (this.props.rooms !== nextProps.rooms) {
-			this.setState({rooms: nextProps.rooms})
+	async componentWillReceiveProps(nextProps) {
+        if (this.props.user !== nextProps.user) {
+			await axios.get('/api/get/myRooms', {params: {rownerid: parseInt(nextProps.user.id)}})
+				.then(res => {
+					this.setState({rooms: res.data})
+				})
+				.catch(err => console.log(err))
         }
     }
 
 	componentDidMount() {
-		// ValidatorForm.addValidationRule('isRoomUnique', (value) => 
-        //     //for every color saved, check if its name is equal to the text value
-        //     this.props.colors.every(
-        //         ({name}) => name.toLowerCase() !== value.toLowerCase()
-        //     )
-        // );
-        // ValidatorForm.addValidationRule('isColorUnique', () => 
-        //     //for every color saved, check if its color is equal to the color we're trying to add
-        //     this.props.colors.every(
-        //         ({color}) => color !== this.state.currColor
-        //     )
-        // );
+		ValidatorForm.addValidationRule('isRoomUnique', (value) => 
+            //for every color saved, check if its name is equal to the text value
+            this.state.rooms.every(
+                ({rname}) => {
+					return rname.toLowerCase() !== value.toLowerCase()
+				}
+            )
+        );
 	}
 
 	createRoom() {
@@ -91,19 +97,17 @@ class Dashboard extends Component {
 		}
 		console.log(data)
 		axios.post('/api/post/newRoom', data)
-			.then(res => console.log(res))
-            .catch(err => console.log(err))
+			.then(res => {
+				console.log(res)
+				this.getRooms();
+			})
+			.catch(err => console.log(err))
 	}
 
 	getRooms() {
-		
-		const data = {
-			rownerid: parseInt(this.props.user.id)
-		}
-		console.log(data)
 		axios.get('/api/get/myRooms', {params: {rownerid: parseInt(this.props.user.id)}})
 			.then(res => {
-				console.log(res)
+				this.setState({rooms: res.data});
 			})
 			.catch(err => console.log(err))
 	}
@@ -117,7 +121,7 @@ class Dashboard extends Component {
     render() {
         const {classes, open, user} = this.props;
         return (
-            <div>
+            <div className={classes.root}>
                 <Drawer
                     className={classes.drawer}
                     variant="persistent"
@@ -138,7 +142,10 @@ class Dashboard extends Component {
 						<TextValidator
 							placeholder='Enter Room Name'
 							name='roomNameInput'
+							value={this.state.roomNameInput}
 							onChange={this.handleChange}
+							validators={['required', 'isRoomUnique']}
+                        	errorMessages={['This field is required', 'Room name is already taken']}
 						/>
 						<Button
 							variant='contained' 
@@ -150,15 +157,16 @@ class Dashboard extends Component {
 					</ValidatorForm>
 
                     <div>
-						<Button variant='contained' color='secondary' onClick={this.getRooms}>get my rooms</Button>
+						{this.state.rooms.map(room => <div>{room.rname}</div>)}
                     </div>
                 </Drawer>
                 <main className={clsx(classes.content, {
                     [classes.contentShift]: open,
                 })}>
                     <div>
-                        <Button variant='contained' color='secondary' onClick={() => this.getNowPlaying()}>Check Now Playing</Button>
-                        <Button variant='contained' color='primary' onClick={() => this.getMe()}>Get me</Button>
+                        {/* stuff outside drawer */}
+						<Home user={this.props.user} playbackState={this.props.playbackState}/>
+
                     </div>
                 </main>
                         
