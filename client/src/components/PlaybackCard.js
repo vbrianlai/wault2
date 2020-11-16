@@ -42,14 +42,37 @@ class MediaControlCard extends Component {
     constructor(props) {
         super(props); 
         this.state = {
-            
+            isPlaying: false,
+            progress: 0
         }
+        this.handlePlay = this.handlePlay.bind(this);
+        this.handlePause = this.handlePause.bind(this);
+        this.handleUserClick = this.handleUserClick.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
         if (this.props.playbackState !== nextProps.playbackState) {
             this.setState({playbackState: nextProps.playbackState})
         }
+    }
+
+    handlePlay() {
+        // console.log
+        this.props.playSong(this.state.playbackState.item);
+        this.setState({isPlaying: true});
+    }
+
+    handlePause() {
+        if (!this.state.isPlaying) {
+            return;
+        } else {
+            this.setState({isPlaying: false})
+            this.props.pauseSong();
+        }
+    }
+
+    handleUserClick() {
+        this.state.isPlaying ? this.handlePause() : this.handlePlay()
     }
 
     render() {
@@ -71,7 +94,7 @@ class MediaControlCard extends Component {
               <IconButton aria-label="Previous">
                 {theme.direction === 'rtl' ? <SkipNextIcon /> : <SkipPreviousIcon />}
               </IconButton>
-              <IconButton aria-label="Play/pause">
+              <IconButton aria-label="Play/pause" onClick={this.handleUserClick}>
                 <PlayArrowIcon className={classes.playIcon} />
               </IconButton>
               <IconButton aria-label="Next">

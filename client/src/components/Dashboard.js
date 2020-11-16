@@ -67,6 +67,7 @@ class Dashboard extends Component {
 		this.createRoom = this.createRoom.bind(this);
 		this.getRooms = this.getRooms.bind(this);
 		this.handleChange = this.handleChange.bind(this);
+		// this.playSong = this.playSong.bind(this);
 	}
 
 	async componentWillReceiveProps(nextProps) {
@@ -130,13 +131,13 @@ class Dashboard extends Component {
                     classes={{
                         paper: classes.drawerPaper,
                     }}
-                >
-                    <div className={classes.drawerHeader}>
-                        <div>You are signed in as {user.display_name}. </div>
-                        <Button variant='contained' href='http://localhost:8888/login'>Sign Out</Button>
-                    </div>
+            	>
+					<div className={classes.drawerHeader}>
+						<div>You are signed in as {user.display_name}. </div>
+						<Button variant='contained' href='http://localhost:8888/login'>Sign Out</Button>
+					</div>
 
-                    <Divider />
+					<Divider />
 
 					<ValidatorForm onSubmit={this.createRoom}>
 						<TextValidator
@@ -145,28 +146,33 @@ class Dashboard extends Component {
 							value={this.state.roomNameInput}
 							onChange={this.handleChange}
 							validators={['required', 'isRoomUnique']}
-                        	errorMessages={['This field is required', 'Room name is already taken']}
+							errorMessages={['This field is required', 'Room name is already taken']}
 						/>
 						<Button
 							variant='contained' 
-                        	color='primary'
+							color='primary'
 							type='submit'
 						>
 							Create Room
 						</Button>
 					</ValidatorForm>
 
-                    <div>
+					<div>
 						{this.state.rooms.map(room => <div>{room.rname}</div>)}
-                    </div>
+					</div>
                 </Drawer>
+				
                 <main className={clsx(classes.content, {
                     [classes.contentShift]: open,
                 })}>
                     <div>
                         {/* stuff outside drawer */}
-						<Home user={this.props.user} playbackState={this.props.playbackState}/>
-
+						<Home 
+							user={this.props.user} 
+							playbackState={this.props.playbackState} 
+							playSong={this.props.playSong} 
+                        	pauseSong={this.props.pauseSong}
+						/>
                     </div>
                 </main>
                         

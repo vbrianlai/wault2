@@ -35,7 +35,11 @@ export default class Home extends Component {
         console.log(this.props.playbackState)
         return (
             <div>
-                <PlaybackCard playbackState={this.props.playbackState}/>
+                <PlaybackCard 
+                    playbackState={this.props.playbackState}
+                    playSong={this.props.playSong} 
+                    pauseSong={this.props.pauseSong}
+                />
             </div>
         )
     }

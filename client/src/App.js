@@ -19,8 +19,9 @@ class App extends Component {
         const params = this.getHashParams();
         const token = params.access_token;
         if (token) {
-        spotifyWebApi.setAccessToken(token);
+            spotifyWebApi.setAccessToken(token);
         }
+
         this.state = {
             loggedIn: token ? true : false,
             user: {},
@@ -33,6 +34,7 @@ class App extends Component {
         this.updateLikes = this.updateLikes.bind(this);
         this.updateCurrent = this.updateCurrent.bind(this);
         this.playSong = this.playSong.bind(this);
+        this.pauseSong = this.pauseSong.bind(this);
         this.openMenu = this.openMenu.bind(this);
         this.getMyCurrentPlaybackState = this.getMyCurrentPlaybackState.bind(this)
     }
@@ -117,13 +119,21 @@ class App extends Component {
     playSong(song) {
         console.log(song || 'Resume');
         if (!song){
+            console.log('play')
             spotifyWebApi.play()
         } else {
+            console.log(this.state.playbackState.progress_ms)
             let songs = {
-                'uris': [`${song.uri}`]
+                'uris': [`${song.uri}`],
+                'position_ms': this.state.playbackState.progress_ms
             };
             spotifyWebApi.play(songs);
         }
+    }
+
+    pauseSong() {
+        this.getMyCurrentPlaybackState();
+        spotifyWebApi.pause();
     }
 
     updateCurrent(song) {
@@ -143,11 +153,18 @@ class App extends Component {
                 <div>
                     <img src={this.state.nowPlaying.albumArt} style={{ height: 150 }} alt=''/>
                 </div>
-                
+
+                {/* <Button onClick={this.playSong}> play</Button>                 */}
                 {this.state.loggedIn &&
                 <div>
                     {/* <Home loggedIn={this.state.loggedIn} user={this.state.user} getMyCurrentPlaybackState={this.getMyCurrentPlaybackState}/> */}
-                    <Dashboard open={this.state.open} user={this.state.user} playbackState={this.state.playbackState}/>
+                    <Dashboard 
+                        open={this.state.open} 
+                        user={this.state.user} 
+                        playbackState={this.state.playbackState}
+                        playSong={this.playSong} 
+                        pauseSong={this.pauseSong}
+                    />
                 </div>
                     
                 }
