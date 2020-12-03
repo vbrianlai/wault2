@@ -3,10 +3,19 @@ import Spotify from 'spotify-web-api-js';
 import TrackList from './TrackList';
 // import {ValidatorForm, TextValidator} from 'react-material-ui-form-validator';
 import TextField from '@material-ui/core/TextField';
+import {withStyles, ThemeProvider, createMuiTheme} from '@material-ui/core/styles';
 
 const spotifyWebApi = new Spotify();
 
-export default class SearchBar extends Component {
+
+const styles = theme => ({
+    searchbar: {
+        backgroundColor: 'white',
+        borderRadius: '10px',
+        // width: '1000px'
+    }
+})
+class SearchBar extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -38,10 +47,11 @@ export default class SearchBar extends Component {
     }
 
     render() {
+        const {classes} = this.props;
         return (
             <div >
                 <TextField 
-                    id="standard-search" 
+                    className={classes.searchbar}
                     label="Search for songs on Spotify" 
                     type="search" onChange={this.handleChange} 
                     value={this.state.searchParams}
@@ -56,3 +66,6 @@ export default class SearchBar extends Component {
         )
     }
 }
+
+
+export default withStyles(styles)(SearchBar);

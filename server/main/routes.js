@@ -52,11 +52,12 @@ router.post('/api/post/newRoom', (req, res, next) => {
     console.log(res);
     const values = [
         req.body.rname,
-        req.body.rownerid
+        req.body.rownerid,
+        req.body.userslikedsongs
     ]
-
-    pool.query(`INSERT INTO rooms(rid, rname, rownerid)
-                VALUES(uuid_generate_v4(), $1, $2)
+    console.log(values);
+    pool.query(`INSERT INTO rooms(rid, rname, rownerid, userslikedsongs)
+                VALUES(uuid_generate_v4(), $1, $2, $3)
                 ON CONFLICT DO NOTHING`, values,
                 (q_err, q_res) => {
                     if(q_err) return next(q_err);

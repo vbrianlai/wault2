@@ -8,6 +8,7 @@ import { Button, Avatar, Drawer, Divider } from "@material-ui/core";
 import axios from "axios";
 import Home from './Home'
 import background from '../media/Endless-Constellation.svg';
+import SearchBar from './SearchBar';
 
 const drawerWidth = '400px'
 const styles = (theme) => ({
@@ -15,46 +16,46 @@ const styles = (theme) => ({
 		backgroundImage: `url(${background})`,
 		height: '100vh'
 	},
-      title: {
-        flexGrow: 1,
-      },
-      hide: {
-        display: 'none',
-      },
-      drawer: {
-        width: drawerWidth,
-        flexShrink: 0,
-      },
-      drawerPaper: {
-        width: drawerWidth,
-        backgroundColor: 'white'
-      },
-      drawerHeader: {
-        display: 'flex',
-        alignItems: 'center',
-        padding: theme.spacing(0, 1),
-        // necessary for content to be below app bar
-        ...theme.mixins.toolbar,
-        justifyContent: 'flex-start',
-      },
-      content: {
-        flexGrow: 1,
-        padding: theme.spacing(3),
-        transition: theme.transitions.create('margin', {
-          easing: theme.transitions.easing.sharp,
-          duration: theme.transitions.duration.leavingScreen,
-        }),
-        marginRight: -drawerWidth,
-        display: 'flex',
-        justifyContent: 'flex-start'
-      },
-      contentShift: {
-        transition: theme.transitions.create('margin', {
-          easing: theme.transitions.easing.easeOut,
-          duration: theme.transitions.duration.enteringScreen,
-        }),
-        marginRight: drawerWidth,
-      },
+	title: {
+		flexGrow: 1,
+	},
+	hide: {
+		display: 'none',
+	},
+	drawer: {
+		width: drawerWidth,
+		flexShrink: 0,
+	},
+	drawerPaper: {
+		width: drawerWidth,
+		backgroundColor: 'white'
+	},
+	drawerHeader: {
+		display: 'flex',
+		alignItems: 'center',
+		padding: theme.spacing(0, 1),
+		// necessary for content to be below app bar
+		...theme.mixins.toolbar,
+		justifyContent: 'flex-start',
+	},
+	content: {
+		flexGrow: 1,
+		padding: theme.spacing(3),
+		transition: theme.transitions.create('margin', {
+			easing: theme.transitions.easing.sharp,
+			duration: theme.transitions.duration.leavingScreen,
+		}),
+		marginRight: -drawerWidth,
+		display: 'flex',
+		justifyContent: 'flex-start'
+	},
+	contentShift: {
+		transition: theme.transitions.create('margin', {
+			easing: theme.transitions.easing.easeOut,
+			duration: theme.transitions.duration.enteringScreen,
+		}),
+		marginRight: drawerWidth,
+	},
 });
 
 class Dashboard extends Component {
@@ -92,9 +93,13 @@ class Dashboard extends Component {
 	}
 
 	createRoom() {
+		const {user} = this.props;
+		let obj = {};
+		obj[user.id] = [];
 		const data = {
 			rname: this.state.roomNameInput,
-			rownerid: parseInt(this.props.user.id)
+			rownerid: parseInt(user.id),
+			userslikedsongs: [JSON.stringify(obj)]
 		}
 		console.log(data)
 		axios.post('/api/post/newRoom', data)
@@ -161,12 +166,13 @@ class Dashboard extends Component {
 						{this.state.rooms.map(room => <div>{room.rname}</div>)}
 					</div>
                 </Drawer>
-				
+
                 <main className={clsx(classes.content, {
                     [classes.contentShift]: open,
                 })}>
                     <div>
                         {/* stuff outside drawer */}
+						<SearchBar updateLikes={this.updateLikes}/>
 						<Home 
 							user={this.props.user} 
 							playbackState={this.props.playbackState} 

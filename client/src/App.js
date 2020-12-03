@@ -119,7 +119,7 @@ class App extends Component {
     playSong(song) {
         console.log(song || 'Resume');
         if (!song){
-            console.log('play')
+            // console.log('play')
             spotifyWebApi.play()
         } else {
             console.log(this.state.playbackState.progress_ms)
@@ -132,6 +132,7 @@ class App extends Component {
     }
 
     pauseSong() {
+        //updates playback state for position in song
         this.getMyCurrentPlaybackState();
         spotifyWebApi.pause();
     }
@@ -149,10 +150,7 @@ class App extends Component {
             <div className="App">
                 <NavBar user={this.state.user} openMenu={this.openMenu}/>
                 
-                <SearchBar token={spotifyWebApi.getAccessToken()} updateLikes={this.updateLikes}/>
-                <div>
-                    <img src={this.state.nowPlaying.albumArt} style={{ height: 150 }} alt=''/>
-                </div>
+                {/* <SearchBar token={spotifyWebApi.getAccessToken()} updateLikes={this.updateLikes}/> */}
 
                 {/* <Button onClick={this.playSong}> play</Button>                 */}
                 {this.state.loggedIn &&

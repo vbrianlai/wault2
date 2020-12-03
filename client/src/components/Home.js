@@ -15,8 +15,6 @@ export default class Home extends Component {
         if (this.props.user !== nextProps.user) {
 
 
-
-
             //Logs in user based on spotify account
             const data = {
                 uid: parseInt(nextProps.user.id),
@@ -32,7 +30,7 @@ export default class Home extends Component {
 
 
     render() {
-        console.log(this.props.playbackState)
+        // console.log(this.props.playbackState)
         return (
             <div>
                 <PlaybackCard 
